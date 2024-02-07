@@ -35,7 +35,8 @@ def create_model(cfg, output_dim):
         encoder=encoder,
         frontend=frontend,
         fusion=fusion,
-        enrollment=cfg.personalization.enrollment
+        enrollment=cfg.personalization.enrollment.name,
+        fuse_labels=cfg.personalization.enrollment.fuse_labels
     )
     return model
 
@@ -52,7 +53,14 @@ class AttentionFusion(torch.nn.Module):
             num_heads=num_heads
         )
     def forward(self, embeddings, adaptation):
-        pass
+        embeddings = embeddings.unsqueeze(1)
+        att, weights = self.attention(embeddings, adaptation, adaptation)
+        # print(att.shape)
+        # print(embeddings.shape)
+        # print(weights.shape)
+        # exit()
+        embeddings += att
+        return embeddings.squeeze(1), weights.squeeze(1)
 
 class FFNN(torch.nn.Sequential):
     def __init__(
@@ -124,13 +132,15 @@ class Model(torch.nn.Module):
         encoder,
         frontend,
         fusion,
-        enrollment
+        enrollment,
+        fuse_labels
     ):
         super().__init__()
         self.encoder = encoder
         self.frontend = frontend
         self.fusion = fusion
         self.enrollment = enrollment
+        self.fuse_labels = fuse_labels
 
     def forward(self, data):
         results = {
@@ -138,10 +148,40 @@ class Model(torch.nn.Module):
             "enrollment": {}
         }
         embeddings = self.encoder(data["instance"]["input"])
-        results["instance"]["output"] = self.frontend(embeddings)
 
         if self.enrollment is not None:
-            pass
+            if self.enrollment == "all":
+                features = torch.cat((
+                    data["adaptation"]["neutral"]["input"].unsqueeze(1),
+                    data["adaptation"]["emotional"]["input"]
+                ), axis=1)
+                labels = torch.cat((
+                    data["adaptation"]["neutral"]["label"].unsqueeze(1),
+                    data["adaptation"]["emotional"]["label"]
+                ), axis=1)
+            elif self.enrollment == "neutral":
+                features = data["adaptation"]["neutral"]["input"]
+                labels = data["adaptation"]["neutral"]["label"]
+            elif self.enrollment == "emotional":
+                features = data["adaptation"]["emotional"]["input"]
+                labels = data["adaptation"]["emotional"]["label"]
+            else:
+                raise NotImplementedError(self.enrollment)
+            BS, NUM, FEAT = features.shape
+            # print(features.shape)
+            features = features.reshape(BS*NUM, FEAT)
+            # print(features.shape)
+            features = self.encoder(features)
+            features = features.reshape(BS, NUM, self.encoder.hidden_size)
+            # print(features.shape)
+            fused, weights = self.fusion(embeddings, features)
+            labels = weights * labels
+            results["instance"]["enrollment"] = self.frontend(features)
+
+        results["instance"]["output"] = self.frontend(embeddings)
+        if self.fuse_labels:
+            assert self.enrollment is not None
+            results["instance"]["output"] += labels
         
         return results
     

@@ -118,7 +118,13 @@ def training(cfg):
     )
 
     model = create_model(cfg.model, output_dim=len(train_dataset.labels))
+    model = model.to(cfg.meta.device)
     # print(model)
+    print("DRY RUN:")
+    with torch.no_grad():
+        output = model(unpack_data(data, cfg.meta.device))
+        print(output["instance"]["output"].shape)
+    # exit()
 
     if cfg.hparams.optimizer == "Adam":
         optimizer = torch.optim.Adam(model.parameters(), lr=cfg.hparams.lr)
