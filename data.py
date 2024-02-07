@@ -170,16 +170,16 @@ class AIBO(torch.utils.data.Dataset):
 
         return {
             "instance": {
-                "input": audio,
+                "input": audio.astype(np.float32),
                 "label": label
             },
             "adaptation": {
                 "neutral": {
-                    "input": adaptation_data[neutral_label],
+                    "input": adaptation_data[neutral_label].astype(np.float32),
                     "label": neutral_label
                 },
                 "emotional": {
-                    "input": np.stack([adaptation_data[x] for x in emotional_labels]),
+                    "input": np.stack([adaptation_data[x] for x in emotional_labels]).astype(np.float32),
                     "label": np.stack(emotional_labels)
                 }
             }
