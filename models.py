@@ -55,11 +55,7 @@ class AttentionFusion(torch.nn.Module):
     def forward(self, embeddings, adaptation):
         embeddings = embeddings.unsqueeze(1)
         att, weights = self.attention(embeddings, adaptation, adaptation)
-        # print(att.shape)
-        # print(embeddings.shape)
-        # print(weights.shape)
-        # exit()
-        embeddings += att
+        embeddings = embeddings + att
         return embeddings.squeeze(1), weights.squeeze(1)
 
 class FFNN(torch.nn.Sequential):
@@ -160,8 +156,8 @@ class Model(torch.nn.Module):
                     data["adaptation"]["emotional"]["label"]
                 ), axis=1)
             elif self.enrollment == "neutral":
-                features = data["adaptation"]["neutral"]["input"]
-                labels = data["adaptation"]["neutral"]["label"]
+                features = data["adaptation"]["neutral"]["input"].unsqueeze(1)
+                labels = data["adaptation"]["neutral"]["label"].unsqueeze(1)
             elif self.enrollment == "emotional":
                 features = data["adaptation"]["emotional"]["input"]
                 labels = data["adaptation"]["emotional"]["label"]
@@ -169,12 +165,12 @@ class Model(torch.nn.Module):
                 raise NotImplementedError(self.enrollment)
             BS, NUM, FEAT = features.shape
             # print(features.shape)
-            features = features.reshape(BS*NUM, FEAT)
+            features = features.view(BS*NUM, FEAT)
             # print(features.shape)
             features = self.encoder(features)
-            features = features.reshape(BS, NUM, self.encoder.hidden_size)
+            features = features.view(BS, NUM, self.encoder.hidden_size)
             # print(features.shape)
-            fused, weights = self.fusion(embeddings, features)
+            embeddings, weights = self.fusion(embeddings, features)
             labels = weights * labels
             results["instance"]["enrollment"] = self.frontend(features)
 
