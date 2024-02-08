@@ -3,4 +3,4 @@ outputs/*
 slurm.*
 run.sh
 __pycache__/*
-results/*
+results*/*
