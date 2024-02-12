@@ -4,8 +4,8 @@ defaults:
   - model/frontend: ffnn
   - model/personalization/enrollment: none
   - model/personalization/fusion: attention
+  - data: aibo
 meta:
-  data_root: ???  # "/data/eihw-gpu6/trianand/AIBO/FAU-AIBO/"
   results_root: ???
   device: cpu
 hparams:
@@ -13,5 +13,3 @@ hparams:
   optimizer: Adam
   lr: 0.0001
   bs: 4
-data:
-  task: 5cl

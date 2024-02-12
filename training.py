@@ -88,7 +88,7 @@ def criterion_weights(dataset):
 def training(cfg):
     experiment_folder = cfg.meta.results_root
     os.makedirs(experiment_folder, exist_ok=True)
-    train_dataset, dev_dataset, test_dataset, encoder = create_data(cfg.meta.data_root, cfg.data.task)
+    train_dataset, dev_dataset, test_dataset, encoder = create_data(cfg.data)
     encoder.to_yaml(os.path.join(experiment_folder, "encoder.yaml"))
 
     train_loader = torch.utils.data.DataLoader(
