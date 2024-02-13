@@ -41,6 +41,16 @@ def create_msp(root):
     df = df.loc[df["EmoClass"].isin(["N", "H", "A", "S"])]
     df = df.loc[df["SpkrID"] != "Unknown"]
 
+    # remove speakers with < 5 utterances
+    speaker_vals = df["SpkrID"].value_counts()
+    speaker_vals = speaker_vals.loc[df["SpkrID"].value_counts() >= 5].index
+    df = df.loc[df["SpkrID"].isin(speaker_vals)]
+
+    # remove speakers with < 1 "N"
+    speaker_neutral = df.groupby("SpkrID")["EmoClass"].apply(lambda x: sum(x == "N"))
+    speaker_neutral = speaker_neutral.loc[speaker_neutral >= 1].index
+    df = df.loc[df["SpkrID"].isin(speaker_neutral)]
+
     df_train = df.loc[df["Split_Set"] == "Train"]
     df_dev = df.loc[df["Split_Set"] == "Development"]
     df_test = df.loc[df["Split_Set"] == "Test1"]
