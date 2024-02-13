@@ -32,8 +32,8 @@ if __name__ == "__main__":
     plt.rcParams["text.usetex"] = True
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["font.serif"] = "Palatino"
-    plt.rcParams["legend.fontsize"] = 11
-    fig = plt.figure(figsize=[6, 4])
+    plt.rcParams["legend.fontsize"] = 9
+    fig = plt.figure(figsize=[5, 3])
     ax = fig.add_subplot()
     for root in args.root:
         df = pd.read_csv(os.path.join(root, "test.csv"))
@@ -47,10 +47,10 @@ if __name__ == "__main__":
         ax.plot(alphas, results, label=labels[root])
     ax.set_xlabel(r"$\alpha$")
     ax.set_ylabel("Utility")
-    ax.set_title("Total utility under different isoelastic social welfare functions")
+    ax.set_title("Total utility under different ISWFs for the 2-class problem")
     sns.despine(ax=ax)
     plt.legend(title="Model")
     plt.tight_layout()
-    plt.savefig("iswf.5cl.png")
-    plt.savefig("iswf.5cl.pdf")
+    plt.savefig("iswf.2cl.png")
+    plt.savefig("iswf.2cl.pdf")
 
