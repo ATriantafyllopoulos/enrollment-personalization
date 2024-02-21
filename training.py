@@ -29,7 +29,7 @@ def train_epoch(
     model.to(device)
     model.train()
     total_loss = 0
-    for data in loader:
+    for data in tqdm.tqdm(loader, total=len(loader), disable=True):
         data = unpack_data(data, device)
         output = model(data)
         loss = criterion(
@@ -48,7 +48,8 @@ def evaluate_loader(
     model,
     criterion,
     loader,
-    device
+    device,
+    silent=True
 ):
     model.to(device)
     model.eval()
@@ -56,7 +57,7 @@ def evaluate_loader(
     outputs = []
     targets = []
     with torch.no_grad():
-        for data in tqdm.tqdm(loader, total=len(loader), disable=True):
+        for data in tqdm.tqdm(loader, total=len(loader), disable=silent):
             data = unpack_data(data, device)
             output = model(data)
             loss = criterion(
