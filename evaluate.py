@@ -38,6 +38,7 @@ def get_CI(y_true, y_pred, metric = audmetric.unweighted_average_recall):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-root", "-r", nargs="+")
+    parser.add_argument("--dataset", default="aibo", choices=["aibo", "msp"])
     args = parser.parse_args()
 
     labels = {
@@ -48,15 +49,22 @@ if __name__ == "__main__":
         "results-2cl-none": "Baseline",
         "results-2cl-neutral": "Pers (neutral)",
         "results-2cl-emotional": "Pers (emotional)",
-        "results-2cl-all": "Pers (all)"
+        "results-2cl-all": "Pers (all)",
+        "results-msp-none": "Baseline",
+        "results-msp-neutral": "Pers (neutral)",
+        "results-msp-emotional": "Pers (emotional)",
+        "results-msp-all": "Pers (all)"
     }
+
+    speaker_col = "speaker" if args.dataset == "aibo" else "SpkrID"
+    label_col = "class" if args.dataset == "aibo" else "EmoClass"
 
     for root in args.root:
         df = pd.read_csv(os.path.join(root, "test.csv"))
-        speakers = df.groupby("speaker").apply(
-            lambda x: audmetric.unweighted_average_recall(x["class"], x["predictions"])
+        speakers = df.groupby(speaker_col).apply(
+            lambda x: audmetric.unweighted_average_recall(x[label_col], x["predictions"])
         )
-        uar = get_CI(df["class"], df["predictions"])
+        uar = get_CI(df[label_col], df["predictions"])
         coeff = gini(speakers.values)
         print((
             f"{labels[root]} & {uar} & {coeff:.3f} & "
