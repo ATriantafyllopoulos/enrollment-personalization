@@ -233,6 +233,8 @@ class AIBO(torch.utils.data.Dataset):
         for x in emotional_labels:
             if x not in adaptation_data:
                 adaptation_data[x] = np.zeros(48000)
+        if neutral_label not in adaptation_data:
+            adaptation_data[neutral_label] = np.zeros(48000)
 
         return {
             "instance": {
@@ -326,6 +328,8 @@ class MSPPodcast(torch.utils.data.Dataset):
         for x in emotional_labels:
             if x not in adaptation_data:
                 adaptation_data[x] = np.zeros(48000)
+        if neutral_label not in adaptation_data:
+            adaptation_data[neutral_label] = np.zeros(48000)
 
         return {
             "instance": {
