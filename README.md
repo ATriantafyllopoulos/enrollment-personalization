@@ -1,6 +1,6 @@
 # Personalization using enrollment
 
-This repository contains the code needed to reproduce the experiments in [ref](##ref)
+This repository contains the code needed to reproduce the experiments in (Triantafyllopoulos and Schuller, 2024).
 
 ## List of python files
 
