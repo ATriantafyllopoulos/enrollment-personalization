@@ -2,7 +2,7 @@
 
 This repository contains the code needed to reproduce the experiments in (Triantafyllopoulos and Schuller, 2024).
 
-![Method Overview](./assets/Personalization.png)
+![Method Overview](./assets/Personalization.svg)
 
 ## List of python files
 
