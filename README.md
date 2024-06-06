@@ -2,6 +2,8 @@
 
 This repository contains the code needed to reproduce the experiments in (Triantafyllopoulos and Schuller, 2024).
 
+![Method Overview][./assets/Personalization.png]
+
 ## List of python files
 
 1. `main.py`: code used to start training, utilizing `hydra` configuration files in `configs`
