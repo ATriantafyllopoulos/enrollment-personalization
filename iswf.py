@@ -20,20 +20,20 @@ if __name__ == "__main__":
     # args = parser.parse_args()
 
     labels = {
-        "results-none": r"\textbf{\textsc{Base}}",
-        "results-neutral": r"\textbf{\textsc{Pers}}$_{N}$",
-        "results-emotional": r"\textbf{\textsc{Pers}}$_{E}$",
-        "results-all": r"\textbf{\textsc{Pers}}$_{A}$",
-        "results-2cl-none": r"\textbf{\textsc{Base}}",
-        "results-2cl-neutral": r"\textbf{\textsc{Pers}}$_{N}$",
-        "results-2cl-emotional": r"\textbf{\textsc{Pers}}$_{E}$",
-        "results-2cl-all": r"\textbf{\textsc{Pers}}$_{A}$",
+        "results/results-none": r"\textbf{\textsc{Base}}",
+        "results/results-neutral": r"\textbf{\textsc{Pers}}$_{N}$",
+        "results/results-emotional": r"\textbf{\textsc{Pers}}$_{E}$",
+        "results/results-all": r"\textbf{\textsc{Pers}}$_{A}$",
+        "results/results-2cl-none": r"\textbf{\textsc{Base}}",
+        "results/results-2cl-neutral": r"\textbf{\textsc{Pers}}$_{N}$",
+        "results/results-2cl-emotional": r"\textbf{\textsc{Pers}}$_{E}$",
+        "results/results-2cl-all": r"\textbf{\textsc{Pers}}$_{A}$",
     }
     plt.rcParams["text.usetex"] = True
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["font.serif"] = "Palatino"
     plt.rcParams["legend.fontsize"] = 9
-    fig, axes = plt.subplots(2, 1, sharex=True, figsize=[7, 3.5])
+    fig, axes = plt.subplots(2, 1, sharex=True, sharey=True, figsize=[7, 3.5])
     cmap = plt.get_cmap("Dark2")
     lines = [
         "solid",
@@ -48,9 +48,9 @@ if __name__ == "__main__":
         ax.set_title(f"Total utility for FAU-AIBO ({task}-class)")
         for model_id, model in enumerate(["none", "neutral", "emotional", "all"]):
             if task == 2:
-                root = f"results-2cl-{model}"
+                root = f"results/results-2cl-{model}"
             else:
-                root = f"results-{model}"
+                root = f"results/results-{model}"
             df = pd.read_csv(os.path.join(root, "test.csv"))
             speakers = df.groupby("speaker").apply(
                 lambda x: audmetric.unweighted_average_recall(x["class"], x["predictions"])
@@ -73,7 +73,14 @@ if __name__ == "__main__":
         #     )
     # handles, labels = ax.get_legend_handles_labels()
     # fig.legend(handles, labels, title="Model", loc="upper center", bbox_to_anchor=(1.15, 1.0))
-    fig.legend(handles=subplots, labels=legend_names,  title="Model", loc="upper right", ncols=2)
+    fig.legend(
+        handles=subplots,
+        labels=legend_names, 
+        title="Model",
+        loc="upper right",
+        bbox_to_anchor=(1, .82),
+        ncols=2
+    )
     # ax.get_legend().remove()
 
     plt.tight_layout()
