@@ -358,3 +358,28 @@ class MSPPodcast(torch.utils.data.Dataset):
             f")"
         )
         return s
+
+
+if __name__ == "__main__":
+
+    def get_msp(df):
+        df = df.reset_index()
+        df = df.rename(columns={0: "FileName"})
+        return df
+    train, dev, test, _ = create_msp("msp-data")
+    get_msp(train.adaptation_set)[["SpkrID", "FileName"]].to_csv("adaptation-sets/msp/train.csv", index=False)
+    get_msp(dev.adaptation_set)[["SpkrID", "FileName"]].to_csv("adaptation-sets/msp/dev.csv", index=False)
+    get_msp(test.adaptation_set)[["SpkrID", "FileName"]].to_csv("adaptation-sets/msp/test.csv", index=False)
+    def get_aibo(df):
+        df = df.reset_index()
+        df = df.rename(columns={0: "file"})
+        return df
+    train, dev, test, _ = create_aibo("aibo-data", task="2cl")
+    get_aibo(train.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-2cl/train.csv", index=False)
+    get_aibo(dev.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-2cl/dev.csv", index=False)
+    get_aibo(test.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-2cl/test.csv", index=False)
+
+    train, dev, test, _ = create_aibo("aibo-data", task="5cl")
+    get_aibo(train.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-5cl/train.csv", index=False)
+    get_aibo(dev.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-5cl/dev.csv", index=False)
+    get_aibo(test.adaptation_set)[["speaker", "file"]].to_csv("adaptation-sets/aibo-5cl/test.csv", index=False)
